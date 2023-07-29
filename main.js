@@ -2,7 +2,15 @@ import './style.css';
 import {Map, View} from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
-import {Control, defaults as defaultControls} from 'ol/control.js';
+import {Control, defaults as defaultControls, MousePosition} from 'ol/control.js';
+import { createStringXY } from 'ol/coordinate';
+
+const mousePositionControl = new MousePosition({
+  coordinateFormat: createStringXY(4),
+  projection: 'EPSG:4326',
+  className: 'custom-mouse-position',
+  target: document.getElementById('mouse-position'),
+});
 
 class GeomTypeControl extends Control {
   /**
@@ -44,7 +52,10 @@ class GeomTypeControl extends Control {
 }
 
 const map = new Map({
-  controls: defaultControls().extend([new GeomTypeControl()]),
+  controls: defaultControls().extend([
+    mousePositionControl,
+    new GeomTypeControl()
+  ]),
   layers: [
     new TileLayer({
       source: new OSM()

@@ -13,3 +13,11 @@ html, body {
   top: 0.5em;
   right: 0.5em;
 }
+.custom-mouse-position {
+  position: absolute;
+  bottom: 0.5em;
+  left: 0.5em;
+  font: 10px sans-serif;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.5)
+}
