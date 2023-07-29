@@ -1,7 +1,8 @@
 import './style.css';
 import {Map, View} from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import Draw from 'ol/interaction/Draw.js';
+import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
+import {OSM, Vector as VectorSource} from 'ol/source.js';
 import {Control, defaults as defaultControls, MousePosition} from 'ol/control.js';
 import { createStringXY } from 'ol/coordinate';
 
@@ -21,6 +22,7 @@ class GeomTypeControl extends Control {
 
     const form = document.createElement('form');
     const select = document.createElement('select');
+    select.id = 'geomTypeSelect';
 
     const optionPoint = document.createElement('option');
     optionPoint.setAttribute('value', 'Point');
@@ -51,6 +53,11 @@ class GeomTypeControl extends Control {
   }
 }
 
+const source = new VectorSource({wrapX: false});
+const vector = new VectorLayer({
+  source: source
+});
+
 const map = new Map({
   controls: defaultControls().extend([
     mousePositionControl,
@@ -59,7 +66,8 @@ const map = new Map({
   layers: [
     new TileLayer({
       source: new OSM()
-    })
+    }),
+    vector
   ],
   target: 'map',
   view: new View({
@@ -67,3 +75,26 @@ const map = new Map({
     zoom: 2
   })
 });
+
+const geomTypeSelect = document.getElementById('geomTypeSelect');
+
+let draw;
+function addInteraction() {
+  const value = geomTypeSelect.value;
+  console.log(value);
+  draw = new Draw({
+    source: source,
+    type: geomTypeSelect.value
+  });
+  map.addInteraction(draw);
+}
+
+/**
+ * Handle change event.
+ */
+geomTypeSelect.onchange = function () {
+  map.removeInteraction(draw);
+  addInteraction();
+};
+
+addInteraction();
