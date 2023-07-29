@@ -5,8 +5,11 @@ html, body {
   height: 100%;
 }
 #map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  position: relative;
+  height: 100%;
   width: 100%;
+}
+#geomTypeControl {
+  top: 0.5em;
+  right: 0.5em;
 }
