@@ -34,12 +34,13 @@ const vector = new VectorLayer({
   source: source
 });
 
-const popupContainer = document.getElementById('popup');
-const popupContent = document.getElementById('popup-content');
-const popupCloser = document.getElementsByTagName('popup-closer');
+const popup = document.getElementById('popup');
+// const popupContent = document.getElementById('popup-content');
+const popupForm = document.getElementById('popup-form');
+const popupCloser = document.getElementById('popup-closer');
 
 const overlay = new Overlay({
-  element: popupContainer,
+  element: popup,
   autoPan: {
     animation: {
       duration: 250,
@@ -50,7 +51,6 @@ const overlay = new Overlay({
 popupCloser.onclick = function() {
   overlay.setPosition(undefined);
   popupCloser.blur();
-  popupContainer.style.display = 'none';
   return false;
 };
 
@@ -102,6 +102,9 @@ document.onkeydown = function(e) {
   }
 };
 
+// Global wktGeom variable
+let wktGeom;
+
 map.on('singleclick', function(e) {
   const geomTypeValue = geomTypeSelect.value;
   
@@ -111,15 +114,18 @@ map.on('singleclick', function(e) {
     map.forEachFeatureAtPixel(e.pixel, function (f) {
       let geom = f.getGeometry();
       let format = new WKT();
-      let wktGeom = format.writeGeometry(geom);
-
-      console.log(wktGeom);
+      wktGeom = format.writeGeometry(geom);
 
       const coordinate = e.coordinate;
-      // popupContent.innerHTML = 'Hello, world!';
       overlay.setPosition(coordinate);
     });
   }
 });
 
-addInteraction();
+popupForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const bufferDistance = document.getElementById('bufferDistance').value;
+
+  console.log(`Buffer submitted! Distance: ${bufferDistance}`);
+  console.log(`Geom to buffer: ${wktGeom}`);
+});
