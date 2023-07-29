@@ -20,38 +20,7 @@ class GeomTypeControl extends Control {
    */
   constructor(opt_options) {
     const options = opt_options || {};
-
-    const form = document.createElement('form');
-    const select = document.createElement('select');
-    select.id = 'geomTypeSelect';
-
-    const optionNone = document.createElement('option');
-    optionNone.setAttribute('value', 'None');
-    optionNone.innerHTML = 'None';
-    select.appendChild(optionNone);
-
-    const optionPoint = document.createElement('option');
-    optionPoint.setAttribute('value', 'Point');
-    optionPoint.innerHTML = 'Point';
-    select.appendChild(optionPoint);
-
-    const optionLineString = document.createElement('option');
-    optionLineString.setAttribute('value', 'LineString');
-    optionLineString.innerHTML = 'LineString';
-    select.appendChild(optionLineString);
-
-    const optionPolygon = document.createElement('option');
-    optionPolygon.setAttribute('value', 'Polygon');
-    optionPolygon.innerHTML = 'Polygon';
-    select.appendChild(optionPolygon);
-
-    form.appendChild(select);
-
-    const element = document.createElement('div');
-    element.className = 'ol-control';
-    element.id = 'geomTypeControl'
-    element.appendChild(form);
-
+    const element = document.getElementById('geomTypeControl');
     super({
       element: element,
       target: options.target,

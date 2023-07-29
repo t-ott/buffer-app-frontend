@@ -8,6 +8,17 @@
   </head> 
   <body>
     <div id="map"></div>
+    
+    <div id="geomTypeControl" class="ol-control">
+      <form>
+        <select id="geomTypeSelect">
+          <option value="None">None</option>
+          <option value="Point">Point</option>
+          <option value="LineString">LineString</option>
+          <option value="Polygon">Polygon</option>
+        </select>
+      </form>
+    </div>
 
     <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
     <script src="https://cdn.jsdelivr.net/npm/elm-pep@1.0.6/dist/elm-pep.js"></script>
