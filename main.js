@@ -4,6 +4,7 @@ import Draw from 'ol/interaction/Draw.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {OSM, Vector as VectorSource} from 'ol/source.js';
 import {Control, defaults as defaultControls, MousePosition} from 'ol/control.js';
+import {WKT} from 'ol/format.js';
 import { createStringXY } from 'ol/coordinate';
 
 const mousePositionControl = new MousePosition({
@@ -23,6 +24,11 @@ class GeomTypeControl extends Control {
     const form = document.createElement('form');
     const select = document.createElement('select');
     select.id = 'geomTypeSelect';
+
+    const optionNone = document.createElement('option');
+    optionNone.setAttribute('value', 'None');
+    optionNone.innerHTML = 'None';
+    select.appendChild(optionNone);
 
     const optionPoint = document.createElement('option');
     optionPoint.setAttribute('value', 'Point');
@@ -80,21 +86,42 @@ const geomTypeSelect = document.getElementById('geomTypeSelect');
 
 let draw;
 function addInteraction() {
-  const value = geomTypeSelect.value;
-  console.log(value);
-  draw = new Draw({
-    source: source,
-    type: geomTypeSelect.value
-  });
-  map.addInteraction(draw);
+  const geomTypeValue = geomTypeSelect.value;
+  console.log('addInteraction value:', geomTypeValue);
+  if (geomTypeValue !== 'None') {
+    draw = new Draw({
+      source: source,
+      type: geomTypeValue
+    });
+    map.addInteraction(draw);
+  }
 }
 
-/**
- * Handle change event.
- */
 geomTypeSelect.onchange = function () {
   map.removeInteraction(draw);
   addInteraction();
 };
+
+document.onkeydown = function(e) {
+  if (e.key == 'Escape' || e.key == 'Esc') {
+    geomTypeSelect.value = 'None';
+    map.removeInteraction(draw);
+  }
+}
+
+map.on('singleclick', function(e) {
+  const geomTypeValue = geomTypeSelect.value;
+  if (geomTypeValue === 'None') {
+    map.forEachFeatureAtPixel(e.pixel, function (f) {
+      const geomTypeValue = geomTypeSelect.value;
+  
+        let geom = f.getGeometry();
+        let format = new WKT();
+        let wktGeom = format.writeGeometry(geom);
+  
+        console.log(wktGeom);
+    });
+  }
+});
 
 addInteraction();
