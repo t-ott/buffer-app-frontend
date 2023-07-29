@@ -1,11 +1,12 @@
 import './style.css';
 import {Map, View} from 'ol';
 import Draw from 'ol/interaction/Draw.js';
+import Overlay from 'ol/Overlay.js'
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {OSM, Vector as VectorSource} from 'ol/source.js';
 import {Control, defaults as defaultControls, MousePosition} from 'ol/control.js';
 import {WKT} from 'ol/format.js';
-import { createStringXY } from 'ol/coordinate';
+import {createStringXY} from 'ol/coordinate';
 
 const mousePositionControl = new MousePosition({
   coordinateFormat: createStringXY(4),
@@ -33,6 +34,26 @@ const vector = new VectorLayer({
   source: source
 });
 
+const popupContainer = document.getElementById('popup');
+const popupContent = document.getElementById('popup-content');
+const popupCloser = document.getElementsByTagName('popup-closer');
+
+const overlay = new Overlay({
+  element: popupContainer,
+  autoPan: {
+    animation: {
+      duration: 250,
+    },
+  },
+});
+
+popupCloser.onclick = function() {
+  overlay.setPosition(undefined);
+  popupCloser.blur();
+  popupContainer.style.display = 'none';
+  return false;
+};
+
 const map = new Map({
   controls: defaultControls().extend([
     mousePositionControl,
@@ -44,6 +65,7 @@ const map = new Map({
     }),
     vector
   ],
+  overlays: [overlay],
   target: 'map',
   view: new View({
     center: [0, 0],
@@ -53,7 +75,9 @@ const map = new Map({
 
 const geomTypeSelect = document.getElementById('geomTypeSelect');
 
+// Global draw variable
 let draw;
+
 function addInteraction() {
   const geomTypeValue = geomTypeSelect.value;
   console.log('addInteraction value:', geomTypeValue);
@@ -76,19 +100,24 @@ document.onkeydown = function(e) {
     geomTypeSelect.value = 'None';
     map.removeInteraction(draw);
   }
-}
+};
 
 map.on('singleclick', function(e) {
   const geomTypeValue = geomTypeSelect.value;
+  
+  // Don't trigger onclick functionality when drawing
   if (geomTypeValue === 'None') {
+
     map.forEachFeatureAtPixel(e.pixel, function (f) {
-      const geomTypeValue = geomTypeSelect.value;
-  
-        let geom = f.getGeometry();
-        let format = new WKT();
-        let wktGeom = format.writeGeometry(geom);
-  
-        console.log(wktGeom);
+      let geom = f.getGeometry();
+      let format = new WKT();
+      let wktGeom = format.writeGeometry(geom);
+
+      console.log(wktGeom);
+
+      const coordinate = e.coordinate;
+      // popupContent.innerHTML = 'Hello, world!';
+      overlay.setPosition(coordinate);
     });
   }
 });
