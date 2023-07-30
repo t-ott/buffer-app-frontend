@@ -128,4 +128,20 @@ popupForm.addEventListener('submit', (e) => {
 
   console.log(`Buffer submitted! Distance: ${bufferDistance}`);
   console.log(`Geom to buffer: ${wktGeom}`);
+
+  // Close popup
+  overlay.setPosition(undefined);
+  popupCloser.blur();
+
+  fetch('/tools/buffer', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      'distance': bufferDistance,
+      'wkt': wktGeom
+    })
+  })
 });
