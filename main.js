@@ -122,8 +122,6 @@ map.on('singleclick', function(e) {
   }
 });
 
-const bufferUrl = 'http://127.0.0.1:8080/buffer'
-
 popupForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const bufferDistance = document.getElementById('bufferDistance').value;
@@ -135,7 +133,7 @@ popupForm.addEventListener('submit', (e) => {
   overlay.setPosition(undefined);
   popupCloser.blur();
 
-  fetch(bufferUrl, {
+  fetch('/buffer', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -147,5 +145,5 @@ popupForm.addEventListener('submit', (e) => {
     })
   })
   .then(response => response.json())
-  .then(response => console.log(JSON.stringify(response)))
+  .then(response => console.log('Got response!', JSON.stringify(response)))
 });
